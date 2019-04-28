@@ -32,8 +32,6 @@ string verificarColor(link r2,Point s)
 
 	while (curr != NULL || st.empty() == false)
 	{
-		/* Reach the left most Node of the
-		   curr Node */
 		while (curr != NULL)
 		{
 			st.push(curr);
@@ -76,7 +74,6 @@ void Binary_tree::initialize_nodes()
 
 void Binary_tree::draw_lines() const
 {
-	// draw nodes
 	for (int i = 0; i < node_points.size(); i++) {
 		Circle c(node_points[i], 5);
 		c.set_style(Line_style(Line_style::solid, 2));
@@ -93,8 +90,6 @@ void Binary_tree::draw_lines() const
 		}
 		c.draw();
 	}
-
-	// draw connecting lines
 	int node = 2;
 
 	for (int i = 0; i < node_points.size() - ((node_points.size() + 1) / 2); i++) {
@@ -116,7 +111,6 @@ int main() {
 	Point center(win.x_max() / 2, win.y_max() / 2);
 	link h = new node(0,Point(center.x, 20));
 	Binary_tree tree(Point(center.x,20),h);
-	//tree.set_color(Color::red);
 
 	win.attach(tree);
 
