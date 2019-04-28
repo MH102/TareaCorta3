@@ -23,6 +23,7 @@ public:
 		else
 			return "negro";
 	}
+	void show(int nivel);
 };
 
 void rotateR(link &h) {
@@ -38,7 +39,39 @@ void rotateL(link &h) {
 	p->izq = h;        // (3)
 	h = p;              // (4)
 }
+void node::show(int nivel) {
+	for (int i = 0; i < 3 * nivel; i++) cout << " ";
 
+	if (this->izq == nullptr && this->der == nullptr) {
+		cout << "[" << this->v << " <" << this->scolor() << ">" << "]";
+	}
+	else {
+		cout << "[" << this->v << " <" << this->scolor() << ">" << endl;
+		if (this->izq)
+			this->izq->show(nivel + 1);
+		else {
+			for (int i = 0; i < 3 * (nivel + 1); i++) cout << " ";
+			cout << "[ ]";
+		}
+		cout << "\n";
+		if (this->der)
+			this->der->show(nivel + 1);
+		else {
+			for (int i = 0; i < 3 * (nivel + 1); i++) cout << " ";
+			cout << "[ ]";
+		}
+		cout << "\n";
+		for (int i = 0; i < 3 * nivel; i++) cout << " ";
+		cout << "]";
+	}
+}
+
+
+ostream& operator <<(ostream& os, link h) {
+	h->show(0);
+	cout << "\n";
+	return os;
+}
 bool esRojo(link x) {
 	if (x == nullptr) return false;
 	return x->nColor == rojo;

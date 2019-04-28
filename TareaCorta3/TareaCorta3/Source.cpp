@@ -111,7 +111,6 @@ int main() {
 	Point center(win.x_max() / 2, win.y_max() / 2);
 	link h = new node(0,Point(center.x, 20));
 	Binary_tree tree(Point(center.x,20),h);
-
 	win.attach(tree);
 
 	win.wait_for_button();
