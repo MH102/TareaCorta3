@@ -9,27 +9,84 @@ class Binary_tree : public Shape
 {
 public:
 	link r2;
-	Binary_tree(Point punto,link root)
-		:r(punto), r2(root), l(7)
+	Binary_tree(int n)
+		:l(7) , permu(n)
 	{
-		initialize_nodes();
+		initialize_nodes(n);
 	}
 	~Binary_tree() {}
 
-	void initialize_nodes();
+	void initialize_nodes(int n);
 	void draw_lines() const;
-
+	void initNiveles();
 
 private:
 	Point r;
 	int l;
+	int permu;
 	vector<Point> node_points;
 };
-string verificarColor(link r2,Point s)
+void Binary_tree::initNiveles() {
+	stack<node *> s;
+	node *curr = r2;
+	r2->niv = 0;
+	r2->p = Point(350, 20);
+	while (curr != NULL || s.empty() == false)
+	{
+		while (curr != NULL)
+		{
+			s.push(curr);
+			if (curr->izq) {
+				curr->izq->niv = curr->niv + 1;
+				curr->izq->p = Point(curr->p.x - (permu * (5 / curr->izq->niv)), curr->p.y + 30);
+			}
+			curr = curr->izq;
+		}
+		curr = s.top();
+		s.pop();
+		if (curr->der) {
+			curr->der->niv = curr->niv + 1;
+			curr->der->p = Point(curr->p.x + (permu * (5 / curr->der->niv)), curr->p.y + 30);
+		}
+		curr = curr->der;
+	}
+}
+void Binary_tree::initialize_nodes(int n)
+{
+	int * pt = new int[n];
+	int j;
+	int randint;
+	for (int i = 0; i < n; i++) {
+		pt[i] = i;
+	}
+	for (int i = 0; i < n; i++) {
+		j = pt[i];
+		randint = rand() % n;
+		pt[i] = pt[randint];
+		pt[randint] = j;
+	}
+	for (int i = 0; i < n; i++) {
+		if (!r2) {
+			r2 = new node(pt[i]);
+		}
+		else {
+			if (pt[i] < r2->p.x) {
+				RBinsert(r2, pt[i]);
+			}
+			else {
+				RBinsert(r2, pt[i]);
+				
+			}
+		}
+	}
+	initNiveles();
+	draw_lines();
+}
+
+void Binary_tree::draw_lines() const
 {
 	stack<link> st;
 	link curr = r2;
-
 	while (curr != NULL || st.empty() == false)
 	{
 		while (curr != NULL)
@@ -37,71 +94,46 @@ string verificarColor(link r2,Point s)
 			st.push(curr);
 			curr = curr->izq;
 		}
-
 		curr = st.top();
 		st.pop();
-		if (curr->p.x == s.x && curr->p.y == s.y) {
-			if (curr->nColor == rojo) {
-				return "rojo";
-			}
-			if (curr->nColor == negro) {
-				return "negro";
-			}
-		}
-		curr = curr->der;
-	}
-	return "non";
-}
-void Binary_tree::initialize_nodes()
-{
-	double nodes = 1.0;
-
-	double tree_w = l * 100;
-	for (int i = 0; i < l; i++) {
-		for (double j = -(nodes / 2); j < (nodes / 2); j++) {
-			if (i == 0) {
-				RBinsert(r2,i+5,Point(r.x + j, r.y + i * 30));
-				node_points.push_back(Point(r.x + j, r.y + i * 30));
-			}
-			else {
-				RBinsert(r2, i+5, Point(r.x + (double(tree_w / nodes) / 2) + (j * double(tree_w / nodes)), r.y + i * 30));
-				node_points.push_back(Point(r.x + (double(tree_w / nodes) / 2) + (j * double(tree_w / nodes)), r.y + i * 30));
-			}
-		}
-		nodes *= 2;
-	}
-}
-
-void Binary_tree::draw_lines() const
-{
-	for (int i = 0; i < node_points.size(); i++) {
-		Circle c(node_points[i], 5);
+		Point nod = curr->p;
+		Circle c(nod, 5);
 		c.set_style(Line_style(Line_style::solid, 2));
-		string test = verificarColor(r2, node_points[i]);
-		if (test == "rojo") {
+		if (curr->nColor == rojo) {
 			c.set_color(Color::red);
 			c.set_fill_color(Color::red);
 		}
-		else {
-			if (test == "negro") {
-				c.set_color(Color::black);
-				c.set_fill_color(Color::black);
-			}
+		if (curr->nColor == negro) {
+			c.set_color(Color::black);
+			c.set_fill_color(Color::black);
 		}
-		c.draw();
-	}
-	int node = 2;
-
-	for (int i = 0; i < node_points.size() - ((node_points.size() + 1) / 2); i++) {
-		for (int j = 1; j < 3; j++) {
-
-			Point from(node_points[i].x, node_points[i].y + 5);
-			Point to(node_points[i * node + j].x, node_points[i * node + j].y - 5);
-
+		Point from(curr->p.x, curr->p.y + 5);
+		if (curr->der && curr->izq) {
+			Point to(curr->der->p.x + 1, curr->der->p.y - 5);
 			Line l(from, to);
 			l.set_color(Color::black);
 			l.draw();
+			Point to2(curr->izq->p.x - 1, curr->izq->p.y - 5);
+			Line l2(from, to2);
+			l2.set_color(Color::black);
+			l2.draw();
 		}
+		else {
+			if (curr->der) {
+				Point to(curr->der->p.x + 1, curr->der->p.y - 5);
+				Line l(from, to);
+				l.set_color(Color::black);
+				l.draw();
+			}
+			if (curr->izq) {
+				Point to(curr->izq->p.x - 1, curr->izq->p.y - 5);
+				Line l(from, to);
+				l.set_color(Color::black);
+				l.draw();
+			}
+		}
+		c.draw();
+		curr = curr->der;
 	}
 }
 
@@ -109,8 +141,9 @@ int main() {
 	Point tl(100, 100);
 	Simple_window win(tl, 720, 400, "Simple Window");
 	Point center(win.x_max() / 2, win.y_max() / 2);
-	link h = new node(0,Point(center.x, 20));
-	Binary_tree tree(Point(center.x,20),h);
+	Binary_tree tree(24);
+	tree.r2->show(0);
+	tree.draw_lines();
 	win.attach(tree);
 
 	win.wait_for_button();

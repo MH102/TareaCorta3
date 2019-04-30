@@ -12,8 +12,9 @@ public:
 	link izq, der;
 	color nColor;
 	Point p;
-	node(int v, Point r) : v{ v }, izq{ nullptr },
-		der{ nullptr }, nColor{ rojo }, p{ r } {}
+	int niv;
+	node(int v) : v{ v }, izq{ nullptr },
+		der{ nullptr }, nColor{ rojo } {}
 	node(int v, color nColor, link izq, link der)
 		: v{ v }, izq{ izq }, der{ der },
 		nColor{ nColor } {}
@@ -43,10 +44,10 @@ void node::show(int nivel) {
 	for (int i = 0; i < 3 * nivel; i++) cout << " ";
 
 	if (this->izq == nullptr && this->der == nullptr) {
-		cout << "[" << this->v << " <" << this->scolor() << ">" << "]";
+		cout << "[" << this->v << " <" << this->scolor() << "> " << this->niv <<" ]";
 	}
 	else {
-		cout << "[" << this->v << " <" << this->scolor() << ">" << endl;
+		cout << "[" << this->v << " <" << this->scolor() << "> " << this->niv << endl;
 		if (this->izq)
 			this->izq->show(nivel + 1);
 		else {
@@ -77,15 +78,15 @@ bool esRojo(link x) {
 	return x->nColor == rojo;
 }
 
-void RBinsertR(link& h, int x, int sw, Point s) {
-	if (h == nullptr) { h = new node(x, s); return; }
+void RBinsertR(link& h, int x, int sw) {
+	if (h == nullptr) { h = new node(x); return; }
 	if (esRojo(h->izq) && esRojo(h->der)) {
 		h->nColor = rojo;
 		h->izq->nColor = negro;
 		h->der->nColor = negro;
 	}
 	if (x < h->v) {
-		RBinsertR(h->izq, x, 0, s);
+		RBinsertR(h->izq, x, 0);
 		if (esRojo(h) && esRojo(h->izq) && sw)
 			rotateR(h);
 		if (esRojo(h->izq) && esRojo(h->izq->izq)) {
@@ -95,7 +96,7 @@ void RBinsertR(link& h, int x, int sw, Point s) {
 		}
 	}
 	else {
-		RBinsertR(h->der, x, 1, s);
+		RBinsertR(h->der, x, 1);
 		if (esRojo(h) && esRojo(h->der) && !sw)
 			rotateL(h);
 		if (esRojo(h->der) && esRojo(h->der->der)) {
@@ -106,7 +107,7 @@ void RBinsertR(link& h, int x, int sw, Point s) {
 	}
 }
 
-void RBinsert(link& h, int x, Point s) {
-	RBinsertR(h, x, 0, s);
+void RBinsert(link& h, int x) {
+	RBinsertR(h, x, 0);
 	h->nColor = negro;
 }
