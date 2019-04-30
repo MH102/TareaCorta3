@@ -38,7 +38,13 @@ void Binary_tree::initNiveles() {
 			s.push(curr);
 			if (curr->izq) {
 				curr->izq->niv = curr->niv + 1;
-				curr->izq->p = Point(curr->p.x - (permu * (5 / curr->izq->niv)), curr->p.y + 30);
+				if (permu >= 40) {
+					curr->izq->p = Point(curr->p.x - (permu+20 * (5 / curr->izq->niv)), curr->p.y + 30);
+					permu /= 2 + (permu/40);
+				}
+				else {
+					curr->izq->p = Point(curr->p.x - (permu * (5 / curr->izq->niv)), curr->p.y + 30);
+				}
 			}
 			curr = curr->izq;
 		}
@@ -141,7 +147,7 @@ int main() {
 	Point tl(100, 100);
 	Simple_window win(tl, 720, 400, "Simple Window");
 	Point center(win.x_max() / 2, win.y_max() / 2);
-	Binary_tree tree(24);
+	Binary_tree tree(39);
 	tree.r2->show(0);
 	tree.draw_lines();
 	win.attach(tree);
